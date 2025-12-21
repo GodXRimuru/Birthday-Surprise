@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #ffc0cb 0%, #ffb6c1 40%, #ffc0cb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 650px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+        .header {
+            background: linear-gradient(135deg, #ff9ec8 0%, #ffb6c1 100%);
+            padding: 35px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-10%, -10%); }
+        }
+        .header h1 {
+            color: white;
+            font-size: 36px;
+            margin-bottom: 0;
+            text-shadow: 2px 2px 8px rgba(194, 24, 91, 0.3);
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+        .content {
+            padding: 50px 40px;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.6);
+        }
+        /* Secret Code Screen */
+        .unlock-section {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            opacity: 1;
+            transition: opacity 0.8s ease-out;
+        }
+        .unlock-section.fade-out {
+            opacity: 0;
+        }
+        .unlock-title {
+            font-family: 'Brush Script MT', cursive;
+            color: #c2185b;
+            font-size: 48px;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(194, 24, 91, 0.2);
+            font-weight: normal;
+        }
+        .code-box {
+            background: linear-gradient(135deg, rgba(255, 245, 247, 0.95) 0%, rgba(255, 240, 245, 0.95) 100%);
+            border: 3px solid rgba(255, 182, 193, 0.6);
+            border-radius: 25px;
+            padding: 50px 40px;
+            max-width: 450px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(255, 105, 180, 0.25), 
+                        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        .code-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 25px;
+            padding: 3px;
+            background: linear-gradient(135deg, rgba(255, 182, 193, 0.8), rgba(255, 105, 180, 0.4));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 18px 60px 18px 20px;
+            border: 2px solid #ffb6c1;
+            border-radius: 15px;
+            font-size: 18px;
+            text-align: center;
+            background: white;
+            box-shadow: inset 0 2px 8px rgba(255, 182, 193, 0.1);
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #c2185b;
+        }
+        /* Hide default cursor and create custom one */
+        input[type="password"],
+        input[type="text"] {
+            caret-color: #ff69b4;
+        }
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff69b4;
+            box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.1), inset 0 2px 8px rgba(255, 182, 193, 0.15);
+            transform: translateY(-2px);
+        }
+        input[type="password"]::placeholder,
+        input[type="text"]::placeholder {
+            letter-spacing: 1px;
+            color: #ffc0cb;
+            font-weight: 300;
+            opacity: 0.8;
+        }
+        /* Custom password dots styling */
+        input[type="password"] {
+            letter-spacing: 8px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #ff9ec8 0%, #ffb6c1 100%);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+        }
+        .toggle-password:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.5);
+        }
+        .toggle-password:active {
+            transform: translateY(-50%) scale(0.95);
+            box-shadow: 0 2px 4px rgba(255, 105, 180, 0.3);
+        }
+        .toggle-password::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.5s ease;
+        }
+        .toggle-password.clicked::before {
+            opacity: 1;
+            transform: scale(1.5);
+            animation: ripple 0.6s ease-out;
+        }
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        .toggle-password-icon {
+            width: 18px;
+            height: 18px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Eye icon (show password) */
+        .eye-icon {
+            width: 18px;
+            height: 10px;
+            border: 2px solid white;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+            display: block;
+        }
+        .eye-icon::before {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Eye closed icon (hide password) */
+        .eye-closed-icon {
+            width: 18px;
+            height: 10px;
+            border: 2px solid white;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+            display: block;
+            opacity: 0.6;
+        }
+        .eye-closed-icon::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 2px;
+            background: white;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+        .eye-closed-icon::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Mobile/Tablet adjustments */
+        @media (max-width: 1024px) {
+            .toggle-password {
+                width: 42px;
+                height: 42px;
+            }
+            .toggle-password-icon {
+                width: 20px;
+                height: 20px;
+            }
+            .eye-icon,
+            .eye-closed-icon {
+                width: 20px;
+                height: 11px;
+            }
+            .eye-icon::before,
+            .eye-closed-icon::after {
+                width: 5.5px;
+                height: 5.5px;
+            }
+        }
+        @media (max-width: 768px) {
+            .toggle-password {
+                width: 44px;
+                height: 44px;
+                right: 8px;
+            }
+            .toggle-password-icon {
+                width: 22px;
+                height: 22px;
+            }
+            .eye-icon,
+            .eye-closed-icon {
+                width: 22px;
+                height: 12px;
+            }
+            .eye-icon::before,
+            .eye-closed-icon::after {
+                width: 6px;
+                height: 6px;
+            }
+            .eye-closed-icon::before {
+                width: 24px;
+            }
+        }
+        @media (max-width: 480px) {
+            .toggle-password {
+                width: 42px;
+                height: 42px;
+            }
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        .enter-btn {
+            flex: 1;
+            padding: 18px;
+            background: linear-gradient(135deg, #e91e63 0%, #d81b60 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .enter-btn:hover {
+            background: linear-gradient(135deg, #d81b60 0%, #c2185b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.5);
+        }
+        .enter-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(233, 30, 99, 0.4);
+        }
+        .error-msg {
+            color: #e91e63;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        /* Welcome Message */
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            width: 100%;
+            display: none;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .welcome-message.fade-in {
+            display: block;
+            opacity: 0;
+            animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .welcome-message.fade-out {
+            display: block;
+            opacity: 1;
+            animation: fadeOut 1.2s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+        }
+        @keyframes fadeIn {
+            0% { 
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+                filter: blur(10px);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+        @keyframes fadeOut {
+            0% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+            100% { 
+                opacity: 0;
+                transform: translateY(-40px) scale(0.95);
+                filter: blur(10px);
+            }
+        }
+        .welcome-text {
+            font-family: 'Brush Script MT', cursive;
+            color: #c2185b;
+            font-size: 48px;
+            line-height: 1.4;
+        }
+        @media (max-width: 768px) {
+            .welcome-text {
+                font-size: 32px;
+                padding: 0 10px;
+            }
+            .header h1 {
+                font-size: 30px;
+            }
+            .container {
+                border-radius: 25px;
+            }
+            .unlock-title {
+                font-size: 40px;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+            .code-box {
+                padding: 40px 25px;
+            }
+            .tab-btn {
+                padding: 10px 20px;
+                font-size: 15px;
+            }
+            .letter-section {
+                padding: 25px;
+            }
+            .letter-heading {
+                font-size: 26px;
+            }
+            .letter-subheading {
+                font-size: 24px;
+            }
+            .letter-text {
+                font-size: 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .welcome-text {
+                font-size: 26px;
+                padding: 0 15px;
+            }
+            .header h1 {
+                font-size: 26px;
+            }
+            .container {
+                border-radius: 20px;
+            }
+            .unlock-title {
+                font-size: 30px;
+            }
+            body {
+                padding: 10px;
+            }
+            .content {
+                padding: 20px 15px;
+                min-height: 400px;
+            }
+            .tab-btn {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+        /* Main Content (will show after welcome message) */
+        .main-content {
+            display: none;
+            width: 100%;
+            opacity: 0;
+        }
+        .main-content.fade-in {
+            display: block;
+            animation: fadeIn 1s ease-in forwards;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 5px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        .tab-buttons::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        @media (max-width: 768px) {
+            .tab-buttons {
+                justify-content: flex-start;
+                flex-wrap: nowrap;
+                gap: 10px;
+                padding: 10px 0;
+                margin-left: -20px;
+                margin-right: -20px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+        }
+        .tab-btn {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #ffb6c1;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #c2185b;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .tab-btn.active {
+            background: #c2185b;
+            color: white;
+            border-color: #c2185b;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        /* Letter Section */
+        .letter-section {
+            background: linear-gradient(to bottom, #fff 0%, #fff5f7 100%);
+            border-radius: 15px;
+            padding: 40px;
+        }
+        .letter-heading {
+            color: #c2185b;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .letter-subheading {
+            font-family: 'Brush Script MT', cursive;
+            color: #d81b60;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+        .letter-text {
+            color: #555;
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        .letter-signature {
+            text-align: right;
+            margin-top: 30px;
+            color: #333;
+            font-size: 16px;
+        }
+        .signature-name {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 28px;
+            color: #c2185b;
+            margin-top: 10px;
+        }
+        /* MUSIC PLAYER STYLES */
+        .music-player-container {
+            background: linear-gradient(to bottom, #fff 0%, #fff5f7 100%);
+            border-radius: 15px;
+            padding: 40px;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+        }
+        .now-playing {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 245, 247, 0.95) 0%, rgba(255, 240, 245, 0.95) 100%);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 182, 193, 0.5);
+        }
+        .current-song {
+            font-size: 22px;
+            color: #c2185b;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .current-artist {
+            font-size: 16px;
+            color: #e91e63;
+            margin-bottom: 15px;
+        }
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .progress-container {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #ffb6c1 0%, #ff69b4 100%);
+            border-radius: 10px;
+            outline: none;
+            cursor: pointer;
+        }
+        .progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #c2185b;
+            border: 3px solid white;
+            box-shadow: 0 0 5px rgba(194, 24, 91, 0.3);
+            cursor: pointer;
+        }
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #c2185b;
+            margin-top: 5px;
+        }
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin: 20px 0;
+        }
+        .control-btn {
+            background: linear-gradient(135deg, #ff9ec8 0%, #ffb6c1 100%);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+            font-size: 24px;
+        }
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+            background: linear-gradient(135deg, #ffb6c1 0%, #ff9ec8 100%);
+        }
+        .control-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(255, 105, 180, 0.3);
+        }
+        .play-pause-btn {
+            width: 70px;
+            height: 70px;
+            font-size: 28px;
+        }
+        .volume-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 182, 193, 0.1);
+            border-radius: 15px;
+        }
+        .volume-slider {
+            width: 150px;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #ffb6c1 0%, #ff69b4 100%);
+            border-radius: 10px;
+            outline: none;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #c2185b;
+            border: 3px solid white;
+            box-shadow: 0 0 5px rgba(194, 24, 91, 0.3);
+            cursor: pointer;
+        }
+        .playlist {
+            margin-top: 40px;
+        }
+        .playlist-title {
+            font-size: 20px;
+            color: #c2185b;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .song-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .song-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .song-list::-webkit-scrollbar-track {
+            background: rgba(255, 182, 193, 0.1);
+            border-radius: 10px;
+        }
+        .song-list::-webkit-scrollbar-thumb {
+            background: #ffb6c1;
+            border-radius: 10px;
+        }
+        .song-list::-webkit-scrollbar-thumb:hover {
+            background: #ff69b4;
+        }
+        .song-item {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            background: rgba(255, 182, 193, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 182, 193, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .song-item:hover {
+            background: rgba(255, 182, 193, 0.2);
+            transform: translateX(5px);
+            border-color: #ffb6c1;
+        }
+        .song-item.active {
+            background: linear-gradient(135deg, rgba(255, 158, 200, 0.3) 0%, rgba(255, 182, 193, 0.3) 100%);
+            border-color: #ff69b4;
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+        }
+        .song-number {
+            width: 30px;
+            height: 30px;
+            background: #c2185b;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .song-info {
+            flex: 1;
+        }
+        .song-name {
+            font-size: 16px;
+            color: #c2185b;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        .song-artist {
+            font-size: 14px;
+            color: #e91e63;
+        }
+        .song-duration {
+            font-size: 14px;
+            color: #ff69b4;
+            font-weight: 500;
+        }
+        /* Audio element hidden */
+        #audioPlayer {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .music-player-container {
+                padding: 25px;
+            }
+            .now-playing {
+                padding: 15px;
+            }
+            .current-song {
+                font-size: 18px;
+            }
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            .play-pause-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+            .song-item {
+                padding: 12px 15px;
+            }
+            .song-name {
+                font-size: 15px;
+            }
+        }
+        @media (max-width: 480px) {
+            .music-player-container {
+                padding: 20px;
+            }
+            .control-buttons {
+                gap: 15px;
+            }
+            .volume-slider {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>For My Love ❤️</h1>
+        </div>
+        <div class="content">
+            <!-- Password Screen -->
+            <div id="unlockSection" class="unlock-section">
+                <div class="unlock-title">Enter the secret code</div>
+                <div class="code-box">
+                    <div class="input-wrapper">
+                        <input type="password" id="secretCode" placeholder="Enter code">
+                        <button class="toggle-password" onclick="togglePassword()" id="toggleBtn">
+                            <span class="toggle-password-icon" id="toggleIcon">
+                                <span class="eye-icon"></span>
+                            </span>
+                        </button>
+                    </div>
+                    <button class="enter-btn" onclick="checkCode()">Enter</button>
+                    <div class="error-msg" id="errorMsg">Incorrect code. Try again! ❤️</div>
+                </div>
+            </div>
+            <!-- Welcome Message -->
+            <div id="welcomeMessage" class="welcome-message">
+                <div class="welcome-text">Welcome my love, enjoy your stay</div>
+            </div>
+            <!-- Main Content -->
+            <div id="mainContent" class="main-content">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('letter')">💝 Love Letter</button>
+                    <button class="tab-btn" onclick="showTab('music')">🎵 Music</button>
+                    <button class="tab-btn" onclick="showTab('notes')">📝 Notes</button>
+                    <button class="tab-btn" onclick="showTab('gallery')">🌹 Gallery</button>
+                </div>
+                <!-- Love Letter Tab -->
+                <div id="letter" class="tab-content active">
+                    <div class="letter-section">
+                        <h2 class="letter-heading">My Dearest</h2>
+                        <h3 class="letter-subheading">A Letter For You</h3>
+                        <p class="letter-text">My love,</p>
+                        <p class="letter-text">Every day with you feels like a beautiful dream that I never want to wake up from. Your smile brightens my darkest days, and your laughter is my favorite melody.</p>
+                        <p class="letter-text">I cherish every moment we spend together, from silly inside jokes to conversations under the stars. You've shown me what true happiness is.</p>
+                        <p class="letter-text">No matter where life takes us, always remember that my heart belongs to you.</p>
+                        <div class="letter-signature">
+                            <p>Forever yours,</p>
+                            <p class="signature-name">With all my heart ♥</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Music Tab -->
+                <div id="music" class="tab-content">
+                    <div class="music-player-container">
+                        <div class="now-playing">
+                            <div class="current-song" id="currentSongName">Select a song from playlist</div>
+                            <div class="current-artist" id="currentArtist">Our Love Songs</div>
+                            <div class="player-controls">
+                                <div class="progress-container">
+                                    <input type="range" id="progressBar" class="progress-bar" min="0" max="100" value="0">
+                                    <div class="time-info">
+                                        <span id="currentTime">0:00</span>
+                                        <span id="duration">0:00</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="previousSong()">⏮</button>
+                                    <button class="control-btn play-pause-btn" onclick="togglePlayPause()" id="playPauseBtn">▶️</button>
+                                    <button class="control-btn" onclick="nextSong()">⏭</button>
+                                </div>
+                                
+                                <div class="volume-container">
+                                    <span>🔊</span>
+                                    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="70">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="playlist">
+                            <div class="playlist-title">Our Love Playlist 💕</div>
+                            <ul class="song-list" id="songList">
+                                <!-- Songs will be added dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Other tabs (placeholder for now) -->
+                <div id="notes" class="tab-content">
+                    <div class="letter-section">
+                        <h2 class="letter-heading">Special Notes 📝</h2>
+                        <p class="letter-text">Coming soon...</p>
+                    </div>
+                </div>
+                <div id="gallery" class="tab-content">
+                    <div class="letter-section">
+                        <h2 class="letter-heading">Our Memories 🌹</h2>
+                        <p class="letter-text">Coming soon...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Audio Player -->
+    <audio id="audioPlayer"></audio>
+    <script>
+        let passwordVisible = false;
+        function togglePassword() {
+            const input = document.getElementById('secretCode');
+            const btn = document.getElementById('toggleBtn');
+            const icon = document.getElementById('toggleIcon');
+            passwordVisible = !passwordVisible;
+            
+            // Add click effect
+            btn.classList.add('clicked');
+            setTimeout(() => {
+                btn.classList.remove('clicked');
+            }, 600);
+            
+            if (passwordVisible) {
+                input.type = 'text';
+                icon.innerHTML = '<span class="eye-closed-icon"></span>';
+            } else {
+                input.type = 'password';
+                icon.innerHTML = '<span class="eye-icon"></span>';
+            }
+        }
+        function checkCode() {
+            const code = document.getElementById('secretCode').value;
+            const correctCodes = ['2025/9/12', '2025/09/12', '2025-9-12', '2025-09-12'];
+            
+            if (correctCodes.includes(code)) {
+                // Hide error message
+                document.getElementById('errorMsg').style.display = 'none';
+                
+                // Fade out password screen
+                const unlockSection = document.getElementById('unlockSection');
+                unlockSection.classList.add('fade-out');
+                
+                // After fade out, show welcome message
+                setTimeout(() => {
+                    unlockSection.style.display = 'none';
+                    const welcomeMsg = document.getElementById('welcomeMessage');
+                    
+                    // Show and start fade in animation
+                    welcomeMsg.style.display = 'block';
+                    // Force reflow to ensure display change is applied
+                    void welcomeMsg.offsetWidth;
+                    welcomeMsg.classList.add('fade-in');
+                    
+                    // After welcome message shows, fade it out
+                    setTimeout(() => {
+                        // Remove fade-in and add fade-out
+                        welcomeMsg.classList.remove('fade-in');
+                        // Force reflow
+                        void welcomeMsg.offsetWidth;
+                        welcomeMsg.classList.add('fade-out');
+                        
+                        // After welcome fades out completely, show main content
+                        setTimeout(() => {
+                            welcomeMsg.style.display = 'none';
+                            welcomeMsg.classList.remove('fade-out');
+                            document.getElementById('mainContent').classList.add('fade-in');
+                            // Initialize music player when main content is shown
+                            initializeMusicPlayer();
+                        }, 1200); // Wait for fade-out animation to complete (1.2s)
+                    }, 3000); // Show welcome for 3 seconds
+                }, 800);
+                
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        // Allow Enter key to submit
+        document.getElementById('secretCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkCode();
+            }
+        });
+        // MUSIC PLAYER CODE
+        const songs = [
+            {
+                name: "Perfect",
+                artist: "Ed Sheeran",
+                url: "https://github.com/GodXRimuru/songs/raw/refs/heads/main/Ed%20Sheeran%20-%20Perfect.mp3"
+            },
+            {
+                name: "A Thousand Years",
+                artist: "Christina Perri",
+                url: "https://github.com/GodXRimuru/songs/raw/refs/heads/main/Christina%20Perri%20-%20A%20Thousand%20Years%20%5BOfficial%20Music%20Video%5D.mp3"
+            },
+            {
+                name: "Until I Found You",
+                artist: "Stephen Sanchez",
+                url: "https://github.com/GodXRimuru/songs/raw/refs/heads/main/Stephen%20Sanchez%20-%20Until%20I%20Found%20You%20(Lyrics).mp3"
+            },
+            {
+                name: "Breathe",
+                artist: "Years & Years",
+                url: "https://github.com/GodXRimuru/songs/raw/refs/heads/main/Years%20And%20Years%20-%20Breathe%20(Lyrics)(Olly%20Alexander).mp3"
+            },
+            {
+                name: "Photograph",
+                artist: "Ed Sheeran",
+                url: "https://github.com/GodXRimuru/songs/raw/refs/heads/main/Ed%20Sheeran%20-%20Photograph%20(Official%20Lyric%20Video)%20%5BKKQl-pIRQMY%5D.mp3"
+            },
+            {
+                name: "I Wanna Be Yours",
+                artist: "Arctic Monkeys",
+                url: "https://github.com/GodXRimuru/songs/raw/refs/heads/main/Arctic%20Monkeys%20-%20I%20Wanna%20Be%20Yours.mp3"
+            },
+            {
+                name: "All of Me",
+                artist: "John Legend",
+                url: "https://github.com/GodXRimuru/songs/raw/refs/heads/main/John%20Legend%20-%20All%20of%20Me%20(Lyrics).mp3"
+            }
+        ];
+        let currentSongIndex = -1;
+        let isPlaying = false;
+        let audio = null;
+        function initializeMusicPlayer() {
+            audio = document.getElementById('audioPlayer');
+            if (!audio) return;
+            // Create playlist
+            const songList = document.getElementById('songList');
+            songList.innerHTML = '';
+            
+            songs.forEach((song, index) => {
+                const li = document.createElement('li');
+                li.className = 'song-item';
+                li.onclick = () => playSong(index);
+                li.innerHTML = `
+                    <div class="song-number">${index + 1}</div>
+                    <div class="song-info">
+                        <div class="song-name">${song.name}</div>
+                        <div class="song-artist">${song.artist}</div>
+                    </div>
+                    <div class="song-duration">--:--</div>
+                `;
+                songList.appendChild(li);
+            });
+            // Volume control
+            const volumeSlider = document.getElementById('volumeSlider');
+            if (volumeSlider) {
+                volumeSlider.addEventListener('input', function() {
+                    audio.volume = this.value / 100;
+                });
+                audio.volume = 0.7; // Set initial volume to 70%
+            }
+            // Progress bar
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                audio.addEventListener('timeupdate', function() {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    progressBar.value = progress || 0;
+                    
+                    // Update time labels
+                    const currentTimeEl = document.getElementById('currentTime');
+                    const durationEl = document.getElementById('duration');
+                    if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
+                    if (durationEl) durationEl.textContent = formatTime(audio.duration);
+                    
+                    // Update song duration in playlist
+                    updateSongDurations();
+                });
+                progressBar.addEventListener('input', function() {
+                    const time = (this.value / 100) * audio.duration;
+                    audio.currentTime = time;
+                });
+            }
+            // Auto play next song when current ends
+            audio.addEventListener('ended', function() {
+                nextSong();
+            });
+            
+            // Update metadata when loaded
+            audio.addEventListener('loadedmetadata', function() {
+                updateSongDurations();
+            });
+        }
+        function playSong(index) {
+            if (!audio) return;
+            // Update active song in playlist
+            document.querySelectorAll('.song-item').forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            currentSongIndex = index;
+            const song = songs[index];
+            
+            audio.src = song.url;
+            audio.play().catch(e => console.log('Play error:', e));
+            isPlaying = true;
+            
+            const currentSongName = document.getElementById('currentSongName');
+            const currentArtist = document.getElementById('currentArtist');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            
+            if (currentSongName) currentSongName.textContent = song.name;
+            if (currentArtist) currentArtist.textContent = song.artist;
+            if (playPauseBtn) playPauseBtn.textContent = '⏸️';
+        }
+        function togglePlayPause() {
+            if (!audio) return;
+            if (currentSongIndex === -1) {
+                playSong(0);
+                return;
+            }
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            
+            if (isPlaying) {
+                audio.pause();
+                if (playPauseBtn) playPauseBtn.textContent = '▶️';
+            } else {
+                audio.play().catch(e => console.log('Play error:', e));
+                if (playPauseBtn) playPauseBtn.textContent = '⏸️';
+            }
+            isPlaying = !isPlaying;
+        }
+        function nextSong() {
+            if (currentSongIndex < songs.length - 1) {
+                playSong(currentSongIndex + 1);
+            } else {
+                playSong(0);
+            }
+        }
+        function previousSong() {
+            if (currentSongIndex > 0) {
+                playSong(currentSongIndex - 1);
+            } else {
+                playSong(songs.length - 1);
+            }
+        }
+        function formatTime(seconds) {
+            if (isNaN(seconds) || !isFinite(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        function updateSongDurations() {
+            if (!audio || !audio.duration) return;
+            
+            // Update current song duration in playlist
+            const songItems = document.querySelectorAll('.song-item');
+            if (currentSongIndex >= 0 && currentSongIndex < songItems.length) {
+                const durationEl = songItems[currentSongIndex].querySelector('.song-duration');
+                if (durationEl) {
+                    durationEl.textContent = formatTime(audio.duration);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
