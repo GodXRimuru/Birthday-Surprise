@@ -566,7 +566,7 @@
             color: #c2185b;
             margin-top: 10px;
         }
-        /* UPDATED MUSIC PLAYER STYLES */
+        /* UPDATED MUSIC PLAYER STYLES - FIXED LAYOUT */
         .music-player-container {
             background: #fff5f7;
             border-radius: 20px;
@@ -657,13 +657,14 @@
             border: none;
         }
         
-        /* UPDATED CONTROL BUTTONS WITH SEARCH AND MODE */
+        /* FIXED CONTROL BUTTONS LAYOUT - NO GAPS */
         .control-buttons {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 15px;
-            gap: 10px;
+            gap: 0;
+            padding: 0 5px;
         }
         
         .control-btn {
@@ -679,6 +680,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0 5px;
         }
         
         .control-btn:hover {
@@ -696,7 +698,7 @@
             gap: 10px;
             align-items: center;
             justify-content: center;
-            flex: 1;
+            flex: 0 0 auto;
         }
         
         /* Play button with centered triangle */
@@ -974,10 +976,14 @@
             .control-btn {
                 width: 38px;
                 height: 38px;
+                margin: 0 3px;
             }
             .play-btn {
                 width: 45px;
                 height: 45px;
+            }
+            .center-controls {
+                gap: 8px;
             }
         }
         
@@ -987,10 +993,22 @@
                 height: 100px;
             }
             .control-buttons {
-                gap: 8px;
+                padding: 0 2px;
+            }
+            .control-btn {
+                width: 36px;
+                height: 36px;
+                margin: 0 2px;
+            }
+            .play-btn {
+                width: 42px;
+                height: 42px;
             }
             .play-btn::before {
                 border-width: 7px 0 7px 12px;
+            }
+            .center-controls {
+                gap: 6px;
             }
         }
     </style>
@@ -1105,7 +1123,7 @@
         </div>
     </div>
     <!-- Audio Player -->
-    <audio id="audioPlayer"></audio>
+    <audio id="audioPlayer" preload="auto"></audio>
     <script>
         let passwordVisible = false;
         function togglePassword() {
@@ -1197,7 +1215,7 @@
                 checkCode();
             }
         });
-        // MUSIC PLAYER CODE
+        // MUSIC PLAYER CODE - FIXED VERSION
         const songs = [
             {
                 name: "I Wanna Be Yours",
@@ -1285,24 +1303,70 @@
                 url: "https://github.com/GodXRimuru/songs/raw/refs/heads/main/Years%20And%20Years%20-%20Breathe%20(Lyrics)(Olly%20Alexander).mp3"
             }
         ];
+        
         let currentSongIndex = -1;
         let isPlaying = false;
         let audio = null;
         let playMode = 0; // 0: loop all, 1: loop one, 2: random
-        let allSongs = [...songs]; // Copy of all songs for search functionality
+        let allSongs = [...songs]; // Copy of all songs
+        let displayedSongs = [...songs]; // Currently displayed songs
+        let audioBuffers = {}; // Cache for audio buffers
         
         function initializeMusicPlayer() {
             audio = document.getElementById('audioPlayer');
             if (!audio) return;
             
-            // Create playlist
+            // Setup progress bar
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                audio.addEventListener('timeupdate', function() {
+                    if (audio.duration) {
+                        const progress = (audio.currentTime / audio.duration) * 100;
+                        progressBar.value = progress;
+                    }
+                });
+                
+                progressBar.addEventListener('input', function() {
+                    if (audio.duration) {
+                        const time = (this.value / 100) * audio.duration;
+                        audio.currentTime = time;
+                    }
+                });
+            }
+            
+            // Auto play next song when current ends
+            audio.addEventListener('ended', function() {
+                handleSongEnded();
+            });
+            
+            // Preload first few songs for faster playback
+            preloadNextSongs();
+            
+            // Create initial playlist
+            updatePlaylistDisplay();
+        }
+        
+        function updatePlaylistDisplay() {
             const songList = document.getElementById('songList');
+            if (!songList) return;
+            
             songList.innerHTML = '';
             
-            songs.forEach((song, index) => {
+            displayedSongs.forEach((song, index) => {
                 const li = document.createElement('li');
                 li.className = 'song-item';
-                li.onclick = () => playSong(index);
+                if (currentSongIndex >= 0 && allSongs[currentSongIndex]?.name === song.name && allSongs[currentSongIndex]?.artist === song.artist) {
+                    li.classList.add('active');
+                }
+                
+                li.onclick = () => {
+                    // Find the original index in allSongs
+                    const originalIndex = allSongs.findIndex(s => 
+                        s.name === song.name && s.artist === song.artist
+                    );
+                    playSong(originalIndex);
+                };
+                
                 li.innerHTML = `
                     <div class="song-info">
                         <div class="song-name">${song.name}</div>
@@ -1311,46 +1375,15 @@
                 `;
                 songList.appendChild(li);
             });
-            
-            // Progress bar
-            const progressBar = document.getElementById('progressBar');
-            if (progressBar) {
-                audio.addEventListener('timeupdate', function() {
-                    const progress = (audio.currentTime / audio.duration) * 100;
-                    progressBar.value = progress || 0;
-                });
-                
-                progressBar.addEventListener('input', function() {
-                    const time = (this.value / 100) * audio.duration;
-                    audio.currentTime = time;
-                });
-            }
-            
-            // Auto play next song when current ends
-            audio.addEventListener('ended', function() {
-                handleSongEnded();
-            });
         }
         
         function playSong(index) {
-            if (!audio) return;
-            
-            // Update active song in playlist
-            document.querySelectorAll('.song-item').forEach((item, i) => {
-                if (i === index) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
+            if (index < 0 || index >= allSongs.length) return;
             
             currentSongIndex = index;
-            const song = songs[index];
+            const song = allSongs[index];
             
-            audio.src = song.url;
-            audio.play().catch(e => console.log('Play error:', e));
-            isPlaying = true;
-            
+            // Update UI immediately
             const currentSongName = document.getElementById('currentSongName');
             const currentArtist = document.getElementById('currentArtist');
             const playPauseBtn = document.getElementById('playPauseBtn');
@@ -1364,18 +1397,62 @@
             if (waveAnimation) {
                 waveAnimation.style.display = 'flex';
             }
+            
+            // Update playlist highlights
+            updatePlaylistDisplay();
+            
+            // Set audio source and play immediately
+            audio.src = song.url;
+            audio.load(); // Force load the new source
+            
+            // Play with minimal delay
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('Auto-play prevented:', error);
+                    // Update button to show play icon since auto-play was prevented
+                    if (playPauseBtn) {
+                        playPauseBtn.className = 'control-btn play-btn';
+                    }
+                    isPlaying = false;
+                }).then(() => {
+                    isPlaying = true;
+                    // Preload next songs for faster playback
+                    preloadNextSongs();
+                });
+            }
+        }
+        
+        function preloadNextSongs() {
+            // Preload next 2 songs for faster playback
+            for (let i = 1; i <= 2; i++) {
+                const nextIndex = (currentSongIndex + i) % allSongs.length;
+                if (nextIndex >= 0 && nextIndex < allSongs.length) {
+                    const nextSong = allSongs[nextIndex];
+                    if (!audioBuffers[nextSong.url]) {
+                        // Create a hidden audio element to preload
+                        const preloadAudio = new Audio();
+                        preloadAudio.src = nextSong.url;
+                        preloadAudio.preload = 'auto';
+                        preloadAudio.load();
+                        audioBuffers[nextSong.url] = preloadAudio;
+                    }
+                }
+            }
         }
         
         function togglePlayPause() {
             if (!audio) return;
             
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const waveAnimation = document.getElementById('waveAnimation');
+            
             if (currentSongIndex === -1) {
+                // If no song is selected, play the first one
                 playSong(0);
                 return;
             }
-            
-            const playPauseBtn = document.getElementById('playPauseBtn');
-            const waveAnimation = document.getElementById('waveAnimation');
             
             if (isPlaying) {
                 audio.pause();
@@ -1386,7 +1463,19 @@
                     waveAnimation.style.display = 'none';
                 }
             } else {
-                audio.play().catch(e => console.log('Play error:', e));
+                // If audio source is not set, set it
+                if (!audio.src || audio.src.includes('blob:')) {
+                    const song = allSongs[currentSongIndex];
+                    audio.src = song.url;
+                    audio.load();
+                }
+                
+                audio.play().catch(e => {
+                    console.log('Play error:', e);
+                    // If play fails, try playing the song again
+                    playSong(currentSongIndex);
+                });
+                
                 if (playPauseBtn) {
                     playPauseBtn.className = 'control-btn play-btn pause-btn';
                 }
@@ -1398,29 +1487,33 @@
         }
         
         function nextSong() {
-            if (songs.length === 0) return;
+            if (allSongs.length === 0) return;
             
+            let newIndex;
             if (playMode === 2) { // Random mode
-                let newIndex;
                 do {
-                    newIndex = Math.floor(Math.random() * songs.length);
-                } while (newIndex === currentSongIndex && songs.length > 1);
-                playSong(newIndex);
-            } else if (currentSongIndex < songs.length - 1) {
-                playSong(currentSongIndex + 1);
+                    newIndex = Math.floor(Math.random() * allSongs.length);
+                } while (newIndex === currentSongIndex && allSongs.length > 1);
+            } else if (currentSongIndex < allSongs.length - 1) {
+                newIndex = currentSongIndex + 1;
             } else {
-                playSong(0);
+                newIndex = 0;
             }
+            
+            playSong(newIndex);
         }
         
         function previousSong() {
-            if (songs.length === 0) return;
+            if (allSongs.length === 0) return;
             
+            let newIndex;
             if (currentSongIndex > 0) {
-                playSong(currentSongIndex - 1);
+                newIndex = currentSongIndex - 1;
             } else {
-                playSong(songs.length - 1);
+                newIndex = allSongs.length - 1;
             }
+            
+            playSong(newIndex);
         }
         
         function handleSongEnded() {
@@ -1464,86 +1557,20 @@
         function filterSongs(reset = false) {
             const searchInput = document.getElementById('searchInput');
             const searchTerm = reset ? '' : searchInput.value.toLowerCase().trim();
-            const songList = document.getElementById('songList');
             
             if (reset || !searchTerm) {
                 // Reset to all songs
-                songs.length = 0;
-                songs.push(...allSongs);
-                songList.innerHTML = '';
-                
-                songs.forEach((song, index) => {
-                    const li = document.createElement('li');
-                    li.className = 'song-item';
-                    li.onclick = () => playSong(index);
-                    li.innerHTML = `
-                        <div class="song-info">
-                            <div class="song-name">${song.name}</div>
-                            <div class="song-artist">${song.artist}</div>
-                        </div>
-                    `;
-                    songList.appendChild(li);
-                });
-                
-                // Reset current song index if it's no longer in the filtered list
-                if (currentSongIndex >= songs.length) {
-                    currentSongIndex = -1;
-                    const playPauseBtn = document.getElementById('playPauseBtn');
-                    if (playPauseBtn) {
-                        playPauseBtn.className = 'control-btn play-btn';
-                    }
-                }
-                
-                return;
+                displayedSongs = [...allSongs];
+            } else {
+                // Filter songs based on search term
+                displayedSongs = allSongs.filter(song => 
+                    song.name.toLowerCase().includes(searchTerm) || 
+                    song.artist.toLowerCase().includes(searchTerm)
+                );
             }
-            
-            // Filter songs based on search term
-            const filteredSongs = allSongs.filter(song => 
-                song.name.toLowerCase().includes(searchTerm) || 
-                song.artist.toLowerCase().includes(searchTerm)
-            );
-            
-            // Update songs array
-            songs.length = 0;
-            songs.push(...filteredSongs);
             
             // Update playlist display
-            songList.innerHTML = '';
-            
-            filteredSongs.forEach((song, index) => {
-                const li = document.createElement('li');
-                li.className = 'song-item';
-                li.onclick = () => {
-                    // Find the original index in allSongs
-                    const originalIndex = allSongs.findIndex(s => 
-                        s.name === song.name && s.artist === song.artist
-                    );
-                    playSong(originalIndex);
-                };
-                li.innerHTML = `
-                    <div class="song-info">
-                        <div class="song-name">${song.name}</div>
-                        <div class="song-artist">${song.artist}</div>
-                    </div>
-                `;
-                songList.appendChild(li);
-            });
-            
-            // Reset current song index if it's no longer in the filtered list
-            if (currentSongIndex >= 0) {
-                const currentSong = allSongs[currentSongIndex];
-                const isInFiltered = filteredSongs.some(song => 
-                    song.name === currentSong.name && song.artist === currentSong.artist
-                );
-                
-                if (!isInFiltered) {
-                    currentSongIndex = -1;
-                    const playPauseBtn = document.getElementById('playPauseBtn');
-                    if (playPauseBtn) {
-                        playPauseBtn.className = 'control-btn play-btn';
-                    }
-                }
-            }
+            updatePlaylistDisplay();
         }
     </script>
 </body>
